@@ -175,7 +175,10 @@ def to_decimal(value=None, hexstr=None, text=None):
             ))
             return to_decimal(hexstr=value)
         else:
-            return int(value)
+            try:
+                return int(value)
+            except ValueError:
+                return to_decimal(hexstr=to_hex(value))
     else:
         return int(value)
 
@@ -201,8 +204,8 @@ def to_bytes(primitive=None, hexstr=None, text=None):
         return b'\x01' if primitive else b'\x00'
     elif isinstance(primitive, bytes):
         return primitive
-    elif isinstance(primitive, int):
-        return to_bytes(hexstr=hex(primitive))
+    elif is_integer(primitive):
+        return to_bytes(hexstr=to_hex(primitive))
     elif hexstr is not None:
         if len(hexstr) % 2:
             hexstr = '0x0' + remove_0x_prefix(hexstr)
